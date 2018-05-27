@@ -13,7 +13,7 @@ const userController = require('./controllers/user');
 const clientController = require('./controllers/client');
 
 // Connect to the beerlocker MongoDB
-mongoose.connect(process.env.MONGODB_CONNECTION);
+mongoose.connect(process.env.DATABASE_URL);
 
 // Create our Express application
 const app = express();
