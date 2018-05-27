@@ -13,5 +13,6 @@ module.exports = {
   testPathIgnorePatterns: ['<rootDir>/(lib|build|docs|node_modules|config)/'],
   coveragePathIgnorePatterns: ['<rootDir>/(node_modules|config)/'],
   collectCoverage: true,
+  collectCoverageFrom: ['src/**/*.js'],
   coverageReporters: ['lcov']
 };
