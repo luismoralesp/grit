@@ -12,15 +12,15 @@ const oauth2Controller = require('./controllers/oauth');
 const userController = require('./controllers/user');
 const clientController = require('./controllers/client');
 
-// Connect to the beerlocker MongoDB
+// Connect to the database
 mongoose.connect(process.env.DATABASE_URL);
 
 // Create our Express application
 const app = express();
 
 // Set view engine to ejs
-app.set('views', path.join(__dirname, '/views'));
 app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '/views'));
 
 // Use the body-parser package in our application
 app.use(bodyParser.json());
@@ -44,19 +44,6 @@ app.use(passport.initialize());
 
 // Create our Express router
 const router = express.Router();
-
-// Create endpoint handlers for <resource>
-/* router
-  .route('/beers')
-  .post(authController.isAuthenticated, beerController.postBeers)
-  .get(authController.isAuthenticated, beerController.getBeers); */
-
-// Create endpoint handlers for /beers/:beer_id
-/* router
-  .route('/beers/:beer_id')
-  .get(authController.isAuthenticated, beerController.getBeer)
-  .put(authController.isAuthenticated, beerController.putBeer)
-  .delete(authController.isAuthenticated, beerController.deleteBeer); */
 
 // Create endpoint handlers for /users
 router
@@ -82,13 +69,19 @@ router
   .post(authController.isClientAuthenticated, oauth2Controller.token);
 
 //Protected resource
-router.route('/home').get(authController.isAuthenticated, (req, res, next) => {
-  try {
-    res.send('This is home');
-  } catch (error) {
-    next(error);
-  }
-});
+router
+  .route('/home')
+  .get(authController.isAuthenticated, async (req, res, next) => {
+    try {
+      const InMemoryMongo = require('mongodb-memory-server').default;
+      console.log(InMemoryMongo);
+      const mongo = new InMemoryMongo();
+      console.log(await mongo.getConnectionString());
+      res.send('This is home');
+    } catch (error) {
+      next(error);
+    }
+  });
 
 // Register all our routes with /api
 app.use('/api', router);
